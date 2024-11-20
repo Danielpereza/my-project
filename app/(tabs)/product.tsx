@@ -18,34 +18,43 @@ const CreateProduct = () => {
   const [price, setPrice] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false); // Estado para manejar el Picker
 
-  // Obtener las categorías desde la base de datos
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('categories')
-          .select('id, name');
+  // Function to fetch categories
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name');
 
-        if (error) {
-          console.log('Error fetching categories:', error.message);
-          Toast.warn("Error al cargar categorías");
-          return;
-        }
-
-        setCategories(data as Category[]); // Aseguramos que los datos cumplen el tipo Category
-      } catch (error) {
-        console.log('Unexpected error:', error);
-        Toast.warn("Error inesperado al cargar categorías");
+      if (error) {
+        console.log('Error fetching categories:', error.message);
+        Toast.warn('Error al cargar categorías');
+        return;
       }
-    };
 
+      console.log('Fetched categories:', data); // Log the fetched categories
+      setCategories(data as Category[]); // Ensure the data matches the Category type
+    } catch (error) {
+      console.log('Unexpected error:', error);
+      Toast.warn('Error inesperado al cargar categorías');
+    }
+  };
+
+  // Load categories on component mount
+  useEffect(() => {
     fetchCategories();
   }, []);
 
+  // Handle when Picker is opened
+  const handlePickerOpen = async () => {
+    setIsPickerOpen(true); // Indicar que el Picker está abierto
+    await fetchCategories(); // Actualizar categorías
+  };
+
   const handleCreateProduct = async () => {
     if (!name || !categoryId || !quantity || !price) {
-      Toast.warn("Por favor llene todos los campos requeridos");
+      Toast.warn('Por favor llene todos los campos requeridos');
       return;
     }
 
@@ -66,20 +75,23 @@ const CreateProduct = () => {
 
       if (error) {
         console.error('Error creating product:', error.message);
-        Toast.warn("Error al crear el producto");
+        Toast.warn('Error al crear el producto');
         setLoading(false);
         return;
       }
 
-      Toast.warn("Producto creado con éxito");
+      Toast.warn('Producto creado con éxito');
       setName('');
       setDescription('');
       setCategoryId(null);
       setQuantity('');
       setPrice('');
+
+      // Refresh categories
+      await fetchCategories();
     } catch (error) {
       console.error('Unexpected error:', error);
-      Toast.warn("Error inesperado al crear el producto");
+      Toast.warn('Error inesperado al crear el producto');
     }
 
     setLoading(false);
@@ -108,12 +120,12 @@ const CreateProduct = () => {
 
       {/* Categorías */}
       <View style={styles.pickerContainer}>
-      <Picker
-        selectedValue={categoryId ?? undefined} // Convierte null a undefined
-        onValueChange={(itemValue: number) => setCategoryId(itemValue)}
-        style={styles.picker}
+        <Picker
+          selectedValue={categoryId ?? undefined} // Convierte null a undefined
+          onValueChange={(itemValue: number) => setCategoryId(itemValue)}
+          onFocus={handlePickerOpen} // Llama a fetchCategories al abrir
+          style={styles.picker}
         >
-
           <Picker.Item label="Seleccione una categoría" value={null} />
           {categories.map((category) => (
             <Picker.Item key={category.id} label={category.name} value={category.id} />

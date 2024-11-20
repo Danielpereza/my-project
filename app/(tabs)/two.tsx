@@ -59,6 +59,36 @@ const ExitScreen = () => {
 
     console.log('Usuario verificado:', userData);  // Log the user data if it is found
     // Get the current user
+    const { data: productData, error: productError } = await supabase
+      .from('products')
+      .select('id, quantity')
+      .eq('id', productId)
+      .single();
+
+    if (productError) {
+      console.log('Error al verificar el producto en la tabla products:', productError);
+      Alert.alert('Error', 'Error al verificar el producto en la base de datos.');
+      return;
+    }
+
+    if (!productData) {
+      console.log('El producto no está registrado en la tabla products:', productId);
+      Alert.alert('Error', 'El producto no está registrado en el sistema.');
+      return;
+    }
+
+    const newQuantity = productData.quantity - parseInt(quantity);
+
+    const { error: updateError } = await supabase
+      .from('products')
+      .update({ quantity: newQuantity })
+      .eq('id', productId);
+
+    if (updateError) {
+      console.log('Error al actualizar la cantidad del producto:', updateError);
+      Alert.alert('Error', 'Error al actualizar la cantidad del producto.');
+      return;
+    }
   
 
     // Proceed to insert the movement

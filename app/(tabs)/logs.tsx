@@ -6,11 +6,12 @@ import { supabase } from '../../supabase';
 type Movement = {
   id: number;
   product_id: string;
-  movement_type: string; // Este es el user_id en el sistema
+  product_name: string; // Añadimos el nombre del producto
+  movement_type: string;
   quantity: number;
   created_at: string;
   user_id: string;
-  username: string; // Añadimos el username
+  username: string; // Añadimos el username del usuario
 };
 
 const RevertScreen = () => {
@@ -32,6 +33,22 @@ const RevertScreen = () => {
     return data ? data.username : ''; // Retorna el username o vacío si no se encuentra
   };
 
+  // Función para obtener el nombre del producto
+  const fetchProductName = async (productId: string): Promise<string> => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('name')
+      .eq('id', productId)
+      .single();
+
+    if (error) {
+      console.log('Error al obtener el nombre del producto:', error.message);
+      return ''; // Retornamos un string vacío si hay error
+    }
+
+    return data ? data.name : ''; // Retorna el nombre o vacío si no se encuentra
+  };
+
   // Función para obtener los movimientos
   const fetchMovements = async () => {
     const { data, error } = await supabase
@@ -44,15 +61,16 @@ const RevertScreen = () => {
       return;
     }
 
-    // Obtener los usernames para cada movimiento
-    const movementsWithUsernames = await Promise.all(
+    // Obtener los usernames y nombres de productos para cada movimiento
+    const movementsWithDetails = await Promise.all(
       data.map(async (movement) => {
-        const username = await fetchUsername(movement.user_id); // Usamos movement_type como user_id
-        return { ...movement, username }; // Añadimos el username al movimiento
+        const username = await fetchUsername(movement.user_id);
+        const productName = await fetchProductName(movement.product_id);
+        return { ...movement, username, product_name: productName }; // Añadimos el username y el nombre del producto
       })
     );
 
-    setMovements(movementsWithUsernames);
+    setMovements(movementsWithDetails);
   };
 
   // Función para actualizar el inventario
@@ -130,7 +148,10 @@ const RevertScreen = () => {
           {movements.map((movement) => (
             <View key={movement.id} style={styles.movementContainer}>
               <Text style={styles.movementText}>
-                <Text style={styles.boldText}>Producto:</Text> {movement.product_id}
+                <Text style={styles.boldText}>Producto:</Text> {movement.product_name}
+              </Text>
+              <Text style={styles.movementText}>
+                <Text style={styles.boldText}>ID:</Text> {movement.product_id}
               </Text>
               <Text style={styles.movementText}>
                 <Text style={styles.boldText}>Tipo:</Text> {movement.movement_type}
@@ -139,7 +160,7 @@ const RevertScreen = () => {
                 <Text style={styles.boldText}>Cantidad:</Text> {movement.quantity}
               </Text>
               <Text style={styles.movementText}>
-                <Text style={styles.boldText}>Usuario:</Text> {movement.username} {/* Mostrar el username */}
+                <Text style={styles.boldText}>Usuario:</Text> {movement.username}
               </Text>
               <Text style={styles.movementText}>
                 <Text style={styles.boldText}>Fecha:</Text> {new Date(movement.created_at).toLocaleString()}
@@ -160,48 +181,36 @@ const RevertScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 20,
     textAlign: 'center',
   },
-  updateButton: {
-    marginBottom: 15,
-  },
   message: {
     textAlign: 'center',
-    fontSize: 16,
     marginTop: 20,
-    color: '#888',
   },
   scrollView: {
     marginTop: 10,
   },
   movementContainer: {
     marginBottom: 15,
-    padding: 15,
+    padding: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
   movementText: {
-    fontSize: 16,
-    color: '#555',
+    fontSize: 14,
     marginBottom: 5,
   },
   boldText: {
     fontWeight: 'bold',
-    color: '#333',
   },
 });
 
