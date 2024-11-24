@@ -40,18 +40,18 @@ const Auth = () => {
 
   return (
     <View style={styles.loginContainer}>
-      <Text>Ingrese usuario y contraseña</Text>
+      <Text style={styles.title}>Ingrese usuario y contraseña</Text>
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder="Correo Electrónico"
+        placeholder="Ingrese su correo electrónico"
         autoCapitalize="none"
         style={styles.input}
       />
       <TextInput
         value={password}
         onChangeText={setPassword}
-        placeholder="Contraseña"
+        placeholder="Ingrese su contraseña"
         secureTextEntry
         style={styles.input}
       />
@@ -73,23 +73,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'white',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   input: {
     width: '100%',
-    height: 40,
-    borderColor: 'gray',
+    padding: 10,
+    marginBottom: 20,
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    borderColor: 'gray',
+    borderRadius: 5,
   },
   registerLink: {
-    fontSize: 16,
     marginTop: 20,
   },
   registerText: {
-    color: '#007bff',
-    fontWeight: 'bold',
+    color: 'blue',
   },
 });
 
