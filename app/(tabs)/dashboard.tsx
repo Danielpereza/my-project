@@ -124,130 +124,145 @@ const GraphScreen = () => {
 
       {/* Productos Debajo del Límite Inferior (Tabla) */}
       <Text style={styles.subtitle}>Productos Debajo del Límite Inferior</Text>
-      <View style={styles.tableContainer}>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableText, styles.tableHeader]}>Producto</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Precio</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Cantidad</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Cantidad Bajo Límite</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Límite Inferior</Text>
+      <ScrollView horizontal>
+        <View style={styles.tableContainer}>
+          <View style={[styles.tableRow, styles.tableHeader]}>
+            <Text style={styles.tableText}>Producto</Text>
+            <Text style={styles.tableText}>Precio</Text>
+            <Text style={styles.tableText}>Cantidad</Text>
+            <Text style={styles.tableText}>Cantidad Bajo Límite</Text>
+            <Text style={styles.tableText}>Límite Inferior</Text>
+          </View>
+          {lowLimitProducts.length > 0 ? (
+            lowLimitProducts.map((product) => (
+              <View key={product.id} style={styles.tableRow}>
+                <Text style={styles.tableText}>{product.name}</Text>
+                <Text style={styles.tableText}>{`$${product.price.toFixed(2)}`}</Text>
+                <Text style={styles.tableText}>{`${product.quantity} unidades`}</Text>
+                <Text style={styles.tableText}>{`${product.low_limit - product.quantity} unidades debajo del límite`}</Text>
+                <Text style={styles.tableText}>{`Límite: ${product.low_limit} unidades`}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No hay productos por debajo del límite inferior.</Text>
+          )}
         </View>
-        {lowLimitProducts.length > 0 ? (
-          lowLimitProducts.map((product) => (
-            <View key={product.id} style={styles.tableRow}>
-              <Text style={styles.tableText}>{product.name}</Text>
-              <Text style={styles.tableText}>{`$${product.price.toFixed(2)}`}</Text>
-              <Text style={styles.tableText}>{`${product.quantity} unidades`}</Text>
-              <Text style={styles.tableText}>{`${product.low_limit - product.quantity} unidades debajo del límite`}</Text>
-              <Text style={styles.tableText}>{`Límite: ${product.low_limit} unidades`}</Text>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noDataText}>No hay productos por debajo del límite inferior.</Text>
-        )}
-      </View>
+      </ScrollView>
 
       {/* Productos por Encima del Límite Superior (Tabla) */}
       <Text style={styles.subtitle}>Productos Por Encima del Límite Superior</Text>
-      <View style={styles.tableContainer}>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableText, styles.tableHeader]}>Producto</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Precio</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Cantidad</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Cantidad Sobre Límite</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Límite Superior</Text>
+      <ScrollView horizontal>
+        <View style={styles.tableContainer}>
+          <View style={[styles.tableRow, styles.tableHeader]}>
+            <Text style={styles.tableText}>Producto</Text>
+            <Text style={styles.tableText}>Precio</Text>
+            <Text style={styles.tableText}>Cantidad</Text>
+            <Text style={styles.tableText}>Cantidad Sobre Límite</Text>
+            <Text style={styles.tableText}>Límite Superior</Text>
+          </View>
+          {highLimitProducts.length > 0 ? (
+            highLimitProducts.map((product) => (
+              <View key={product.id} style={styles.tableRow}>
+                <Text style={styles.tableText}>{product.name}</Text>
+                <Text style={styles.tableText}>{`$${product.price.toFixed(2)}`}</Text>
+                <Text style={styles.tableText}>{`${product.quantity} unidades`}</Text>
+                <Text style={styles.tableText}>{`${product.quantity - product.high_limit} unidades por encima del límite`}</Text>
+                <Text style={styles.tableText}>{`Límite: ${product.high_limit} unidades`}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No hay productos por encima del límite superior.</Text>
+          )}
         </View>
-        {highLimitProducts.length > 0 ? (
-          highLimitProducts.map((product) => (
-            <View key={product.id} style={styles.tableRow}>
-              <Text style={styles.tableText}>{product.name}</Text>
-              <Text style={styles.tableText}>{`$${product.price.toFixed(2)}`}</Text>
-              <Text style={styles.tableText}>{`${product.quantity} unidades`}</Text>
-              <Text style={styles.tableText}>{`${product.quantity - product.high_limit} unidades por encima del límite`}</Text>
-              <Text style={styles.tableText}>{`Límite: ${product.high_limit} unidades`}</Text>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noDataText}>No hay productos por encima del límite superior.</Text>
-        )}
-      </View>
-
+      </ScrollView>
       {/* Tabla de Productos y Características */}
       <Text style={styles.subtitle}>Productos y Sus Características</Text>
-      <View style={styles.tableContainer}>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableText, styles.tableHeader]}>Producto</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Descripción</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Categoría</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Cantidad</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Precio</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Límite Inferior</Text>
-          <Text style={[styles.tableText, styles.tableHeader]}>Límite Superior</Text>
+      <ScrollView horizontal>
+        <View style={styles.tableContainer}>
+          <View style={[styles.tableRow, styles.tableHeader]}>
+            <Text style={styles.tableText}>Producto</Text>
+            <Text style={styles.tableText}>Descripción</Text>
+            <Text style={styles.tableText}>Categoría</Text>
+            <Text style={styles.tableText}>Cantidad</Text>
+            <Text style={styles.tableText}>Precio</Text>
+            <Text style={styles.tableText}>Límite Inferior</Text>
+            <Text style={styles.tableText}>Límite Superior</Text>
+          </View>
+          {products.length > 0 ? (
+            products.map((product) => (
+              <View key={product.id} style={styles.tableRow}>
+                <Text style={styles.tableText}>{product.name}</Text>
+                <Text style={styles.tableText}>{product.description}</Text>
+                <Text style={styles.tableText}>{product.category_id}</Text>
+                <Text style={styles.tableText}>{`${product.quantity} unidades`}</Text>
+                <Text style={styles.tableText}>{`$${product.price.toFixed(2)}`}</Text>
+                <Text style={styles.tableText}>{`Límite Inferior: ${product.low_limit}`}</Text>
+                <Text style={styles.tableText}>{`Límite Superior: ${product.high_limit}`}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No hay productos registrados.</Text>
+          )}
         </View>
-        {products.length > 0 ? (
-          products.map((product) => (
-            <View key={product.id} style={styles.tableRow}>
-              <Text style={styles.tableText}>{product.name}</Text>
-              <Text style={styles.tableText}>{product.description}</Text>
-              <Text style={styles.tableText}>{product.category_id}</Text>
-              <Text style={styles.tableText}>{`${product.quantity} unidades`}</Text>
-              <Text style={styles.tableText}>{`$${product.price.toFixed(2)}`}</Text>
-              <Text style={styles.tableText}>{`Límite Inferior: ${product.low_limit}`}</Text>
-              <Text style={styles.tableText}>{`Límite Superior: ${product.high_limit}`}</Text>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noDataText}>No hay productos disponibles.</Text>
-        )}
-      </View>
+      </ScrollView>
 
-      {/* Gráfico de los Productos Más Movidos */}
+      {/* Gráfico de Productos Más Movidos */}
       <Text style={styles.subtitle}>Productos Más Movidos</Text>
-      <BarChart
-        data={{
-          labels: mostMoved.map(([productId]) => productId.toString()),
-          datasets: [
-            {
-              data: mostMoved.map(([_, quantity]) => quantity),
-            },
-          ],
-        }}
-        width={screenWidth}
-        height={220}
-        yAxisLabel="Unidades"
-        yAxisSuffix=''
-        chartConfig={{
-          backgroundColor: '#1cc910',
-          backgroundGradientFrom: '#1cc910',
-          backgroundGradientTo: '#1cc910',
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-      />
+      <ScrollView horizontal>
+        <View style={styles.chartContainer}>
+          <BarChart
+            data={{
+              labels: mostMoved.map((item) => item[0]),
+              datasets: [
+                {
+                  data: mostMoved.map((item) => item[1]),
+                },
+              ],
+            }}
+            width={screenWidth}
+            height={220}
+            yAxisLabel=''
+            yAxisSuffix=''
+            chartConfig={{
+              backgroundColor: '#008080',
+              backgroundGradientFrom: '#00ced1',
+              backgroundGradientTo: '#5f9ea0',
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            verticalLabelRotation={30}
+          />
+        </View>
+      </ScrollView>
 
-      {/* Gráfico de los Productos Menos Movidos */}
-      <Text style={styles.subtitle}>Productos que menos se mueven</Text>
-      <BarChart
-        data={{
-          labels: leastMoved.map(([productId]) => productId.toString()),
-          datasets: [
-            {
-              data: leastMoved.map(([_, quantity]) => quantity),
-            },
-          ],
-        }}
-        width={screenWidth}
-        height={220}
-        yAxisLabel="Unidades"
-        yAxisSuffix=''
-        chartConfig={{
-          backgroundColor: '#1cc910',
-          backgroundGradientFrom: '#1cc910',
-          backgroundGradientTo: '#1cc910',
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-      />
+      {/* Gráfico de Productos Menos Movidos */}
+      <Text style={styles.subtitle}>Productos Menos Movidos</Text>
+      <ScrollView horizontal>
+        <View style={styles.chartContainer}>
+          <BarChart
+            data={{
+              labels: leastMoved.map((item) => item[0]),
+              datasets: [
+                {
+                  data: leastMoved.map((item) => item[1]),
+                },
+              ],
+            }}
+            width={screenWidth}
+            height={220}
+            yAxisLabel=''
+            yAxisSuffix=''
+            chartConfig={{
+              backgroundColor: '#008080',
+              backgroundGradientFrom: '#00ced1',
+              backgroundGradientTo: '#5f9ea0',
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            verticalLabelRotation={30}
+          />
+        </View>
+      </ScrollView>
     </ScrollView>
   );
 };
@@ -255,52 +270,48 @@ const GraphScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-    padding: 16,
+    backgroundColor: '#fff',
+    padding: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 16,
+    marginVertical: 10,
   },
   chartContainer: {
-    marginVertical: 16,
+    marginBottom: 20,
   },
   tableContainer: {
-    marginVertical: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 8,
+    flexDirection: 'column',
+    marginVertical: 10,
   },
   tableRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    flexWrap: 'wrap',
+    marginBottom: 5,
+    justifyContent: 'space-between', // Ensures proper distribution of columns
   },
   tableText: {
-    flex: 1,
-    textAlign: 'center',
-    borderRightWidth: 1,
-    borderRightColor: '#ddd',
+    padding: 5,
+    fontSize: 14,
+    width: screenWidth / 4, // Adjust this value to fit your columns
+    textAlign: 'center', // Center-align text for readability
   },
   tableHeader: {
     fontWeight: 'bold',
     backgroundColor: '#f0f0f0',
   },
   noDataText: {
+    fontSize: 14,
+    color: 'gray',
     textAlign: 'center',
-    color: '#777',
-    fontStyle: 'italic',
-    marginVertical: 8,
+    marginTop: 10,
   },
 });
 
