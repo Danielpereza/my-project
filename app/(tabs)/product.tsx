@@ -4,7 +4,6 @@ import { supabase } from '../../supabase'; // Ajusta la ruta según tu proyecto
 import ToastManager, { Toast } from 'toastify-react-native';
 import { Picker } from '@react-native-picker/picker';
 
-// Definimos el tipo de categoría
 type Category = {
   id: number;
   name: string;
@@ -16,11 +15,11 @@ const CreateProduct = () => {
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState<string>('');
   const [price, setPrice] = useState<string>('');
+  const [lowLimit, setLowLimit] = useState<string>(''); // Mínimo
+  const [highLimit, setHighLimit] = useState<string>(''); // Máximo
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false); // Estado para manejar el Picker
 
-  // Function to fetch categories
   const fetchCategories = async () => {
     try {
       const { data, error } = await supabase
@@ -33,28 +32,25 @@ const CreateProduct = () => {
         return;
       }
 
-      console.log('Fetched categories:', data); // Log the fetched categories
-      setCategories(data as Category[]); // Ensure the data matches the Category type
+      setCategories(data as Category[]);
     } catch (error) {
       console.log('Unexpected error:', error);
       Toast.warn('Error inesperado al cargar categorías');
     }
   };
 
-  // Load categories on component mount
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // Handle when Picker is opened
-  const handlePickerOpen = async () => {
-    setIsPickerOpen(true); // Indicar que el Picker está abierto
-    await fetchCategories(); // Actualizar categorías
-  };
-
   const handleCreateProduct = async () => {
-    if (!name || !categoryId || !quantity || !price) {
+    if (!name || !categoryId || !quantity || !price || !lowLimit || !highLimit) {
       Toast.warn('Por favor llene todos los campos requeridos');
+      return;
+    }
+
+    if (parseInt(lowLimit) > parseInt(highLimit)) {
+      Toast.warn('El límite mínimo no puede ser mayor al máximo');
       return;
     }
 
@@ -70,6 +66,8 @@ const CreateProduct = () => {
             category_id: categoryId,
             quantity: parseInt(quantity),
             price: parseFloat(price),
+            low_limit: parseInt(lowLimit),
+            high_limit: parseInt(highLimit),
           },
         ]);
 
@@ -86,9 +84,8 @@ const CreateProduct = () => {
       setCategoryId(null);
       setQuantity('');
       setPrice('');
-
-      // Refresh categories
-      await fetchCategories();
+      setLowLimit('');
+      setHighLimit('');
     } catch (error) {
       console.error('Unexpected error:', error);
       Toast.warn('Error inesperado al crear el producto');
@@ -101,7 +98,6 @@ const CreateProduct = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Crear Producto</Text>
 
-      {/* Nombre del producto */}
       <TextInput
         style={styles.inputField}
         value={name}
@@ -109,7 +105,6 @@ const CreateProduct = () => {
         placeholder="Nombre del producto"
       />
 
-      {/* Descripción */}
       <TextInput
         style={styles.inputField}
         value={description}
@@ -118,12 +113,10 @@ const CreateProduct = () => {
         multiline
       />
 
-      {/* Categorías */}
       <View style={styles.pickerContainer}>
         <Picker
-          selectedValue={categoryId ?? undefined} // Convierte null a undefined
+          selectedValue={categoryId ?? undefined}
           onValueChange={(itemValue: number) => setCategoryId(itemValue)}
-          onFocus={handlePickerOpen} // Llama a fetchCategories al abrir
           style={styles.picker}
         >
           <Picker.Item label="Seleccione una categoría" value={null} />
@@ -133,7 +126,6 @@ const CreateProduct = () => {
         </Picker>
       </View>
 
-      {/* Cantidad */}
       <TextInput
         style={styles.inputField}
         value={quantity}
@@ -142,7 +134,6 @@ const CreateProduct = () => {
         keyboardType="numeric"
       />
 
-      {/* Precio */}
       <TextInput
         style={styles.inputField}
         value={price}
@@ -151,7 +142,22 @@ const CreateProduct = () => {
         keyboardType="decimal-pad"
       />
 
-      {/* Botón para crear producto */}
+      <TextInput
+        style={styles.inputField}
+        value={lowLimit}
+        onChangeText={setLowLimit}
+        placeholder="Límite mínimo"
+        keyboardType="numeric"
+      />
+
+      <TextInput
+        style={styles.inputField}
+        value={highLimit}
+        onChangeText={setHighLimit}
+        placeholder="Límite máximo"
+        keyboardType="numeric"
+      />
+
       <TouchableOpacity style={styles.button} onPress={handleCreateProduct} disabled={loading}>
         <Text style={styles.buttonText}>{loading ? 'Creando...' : 'Crear Producto'}</Text>
       </TouchableOpacity>
